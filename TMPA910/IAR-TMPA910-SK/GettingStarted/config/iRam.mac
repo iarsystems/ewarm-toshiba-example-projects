@@ -1,0 +1,28 @@
+
+setup()
+{
+__var Reg;
+  // Disable MMU and enable ICache
+  Reg = __jtagCP15ReadReg(1, 0, 0, 0);
+  Reg &= 0xFFFFFFFA;
+  Reg |= 1<<12;
+  __jtagCP15WriteReg(1, 0, 0, 0, Reg);
+  __message "Enable I Cache\n";
+  
+  // Disable WDT 
+  __writeMemory32(0x1ACCE551,0xF0010C00,"Memory");  // WdogLock = 0x1ACCE551;
+  __writeMemory32(0,0xF0010008,"Memory");           // WdogControl = 0;   
+  __writeMemory32(0,0xF0010C00,"Memory");           // WdogLock = 0;
+  
+  // Remap SRAM3 on 0x0
+  __writeMemory32(1,0xF0000004,"Memory");     // REMAP = 1;    
+}
+
+execUserPreload()
+{
+  // Halt CPU immediately after reset
+  __message "Executing execUserPreload() function\n";
+  __message "Reset controller and halt on addr 0\n";
+  __hwReset(0);
+  setup();
+}

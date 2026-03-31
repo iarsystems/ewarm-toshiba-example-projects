@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<workspace>
+  <project>
+    <path>$WS_DIR$/LED.ewp</path>
+  </project>
+  <batchBuild>
+    <batchDefinition>
+      <name>All</name>
+      <member>
+        <project>LED</project>
+        <configuration>FLASH</configuration>
+      </member>
+      <member>
+        <project>LED</project>
+        <configuration>RAM</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
+</workspace>

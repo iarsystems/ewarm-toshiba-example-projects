@@ -1,0 +1,79 @@
+##############################################################################
+##                                                                          ##
+##      SD-Card I/F demonstartion sample program for TMPM380-SK Board       ##
+##                                                                          ##
+##############################################################################
+
+DESCRIPTION
+===========
+   This example project shows how to use IAR Embedded Workbench for ARM
+  to develop SD-Card device interface code for TMPM380-SK board. 
+  It demonstrates basic use of SD-Card device, UART and 7-Segment display.
+
+  On TMPM380-SK Platform, UART is bridged to USB port using CP2102 bridge 
+  controller. UART serial communication can be performed over the USB link
+  interface. Sample program displays "Hello" string on serial console 
+  connected via USB cable. If the SD-Card is inserted in the socket, the
+  sample program will display card size and properties of SD-card.
+  Sample program performs the block data write/verify test for block 
+  range defined  with TEST_STARTBLOCK and TEST_ENDBLOCK.
+
+  Default setup (in main.c)
+     #define TEST_STARTBLOCK	0
+     #define TEST_ENDBLOCK		10000
+
+  The example handles Standard SD Cards.
+
+CONFIGURATION
+=============
+  Download the USB-UART bridge VCP driver from the following URL and 
+  install it on the PC.
+  https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx
+
+  Connect the board to the PC using a USB cable.
+  Once the TMPM380-SK platform is powered ON, you may need to setup
+  the device driver of USB-UART bridge device.
+
+  Open the serial console with the communication settings below: 
+    Bit rate    : 57600 bits/sec
+    Data bit    : 8
+    Parity      : none
+    Stop bit    : 1
+    Flow control: none
+
+
+GETTING STARTED
+===============
+  1) Build and download the example.
+  2) Run the program.
+  2) Open a terminal window and set up the communications as above.
+  3) Choose appropriate configuration (FLASH or RAM) and start execution.
+  4) The string below will be displayed on the terminal window on the PC.
+  
+     "Hello!!
+      This program is running with TMPM380"
+
+  5) Insert the SD-Card in the socket. The sample program will detect the card
+     and will display the total size of card memory.
+     Press 'Y' or 'y' to start data access verification test.
+     
+     Below is an example of output display
+     ------------------------------------------------------------------
+     Please insert SD Card !!
+     Found SD Card in socket.
+     Disk Size = 1030 MB
+     Block Count = 2012160
+     Block Size = 512
+     Disk Type = SD Class 1
+     Disk Write Protection is OFF
+
+     Press 'Y' to Write & Verify SD-Card Block Data
+     Precaution: SD-Card original data will get lost by this test
+
+     Please do NOT remove SD-Card during Test
+     Running......................................................
+     .............................................................
+     .............................................................
+     ...
+     SD-Card Test Done Successfully
+     ------------------------------------------------------------------

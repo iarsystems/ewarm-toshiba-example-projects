@@ -1,0 +1,40 @@
+setup()
+{
+__var Reg;
+
+  // Enable I Cache
+  // Disable MMU and enable ICache
+  Reg = __jtagCP15ReadReg(1, 0, 0, 0);
+  Reg &= 0xFFFFFFFA;
+  Reg |= 1<<12;
+//To disable I Cache, comment out following line
+  __jtagCP15WriteReg(1, 0, 0, 0, Reg);
+
+  // Turn-on clock and deassert RESET for SPIB0
+  __writeMemory32(0x00000011, 0x5000D290, "Memory"); // ClockGatingOff SPBI0
+  __writeMemory32(0x00000011, 0x5000D490, "Memory"); // SoftResetOn SPBI0
+  __writeMemory32(0x00000011, 0x5000D690, "Memory"); // SoftResetOff SPBI0
+
+  // Setup memory map for SPIB0 CH0 and CH1
+  __writeMemory32(0x70000021, 0x50098000, "Memory"); // SPIB0_FLSHMEMMAP0
+  __writeMemory32(0x71000021, 0x50098004, "Memory"); // SPIB0_FLSHMEMMAP1
+
+}
+
+execUserReset()
+{
+ if(!using_bootloader) {
+  __message("execUserReset");
+//  __hwReset(0);
+  setup();
+ }
+}
+
+execUserPreload()
+{
+ if(!using_bootloader) {
+  __message("execUserPreload");
+//  __hwReset(0);
+  setup();
+ }
+}

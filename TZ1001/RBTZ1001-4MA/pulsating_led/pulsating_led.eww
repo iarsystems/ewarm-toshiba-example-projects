@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<workspace>
+  <project>
+    <path>$WS_DIR$/pulsating_led.ewp</path>
+  </project>
+  <batchBuild>
+    <batchDefinition>
+      <name>All</name>
+      <member>
+        <project>pulsating_led</project>
+        <configuration>Flash_Debug</configuration>
+      </member>
+      <member>
+        <project>pulsating_led</project>
+        <configuration>RAM_Debug</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
+</workspace>

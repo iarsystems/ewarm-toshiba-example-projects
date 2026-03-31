@@ -1,0 +1,28 @@
+########################################################################
+#
+#                           Blinking_LED.eww
+#
+# $Revision: 64446 $
+#
+########################################################################
+
+DESCRIPTION
+===========
+  This example project shows how to use the IAR Embedded Workbench for
+  ARM to develop code for Toshiba TMPM46B family microcontrollers.
+  This sample is developed for IAR TMPM46B-SK Board.
+  It uses TMR interrupt handler to toggle PC0 port pin data.
+
+COMPATIBILITY
+=============
+  By default the project is configured to use the I-Jet/JTAGjet 
+  interface.
+
+CONFIGURATION
+=============
+  nothing specific
+
+GETTING STARTED
+===============
+  1) Build and download the example.
+  2) Run the program.

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<infocenter_data version="1.0">
+  <iar_name>ToggleGPIO_Template</iar_name>                                          <!--App-->
+  <iar_description>
+   It demonstrates a simple use of GPIO module and also shows how to create
+   an entry point to the user application
+  </iar_description><!--App short description-->
+  <iar_curdir>$CUR_DIR$</iar_curdir>
+</infocenter_data>

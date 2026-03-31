@@ -1,0 +1,159 @@
+/*************************************************************************
+ *
+ *    Used with ICCARM and AARM.
+ *
+ *    (c) Copyright IAR Systems 2009
+ *
+ *    File name   : main.c
+ *    Description : Main module
+ *
+ *    History :
+ *    1. Date        : 24, March 2009
+ *       Author      : Stanimir Bonev
+ *       Description : Create
+ *
+ *   This example project shows how to use the IAR Embedded Workbench for ARM
+ *  to develop code for IAR TMPA910-SK board. It shows
+ *  basic use of I/O, timer and the interrupt controllers.
+ *   It starts by togging LED1 (PB0).
+ *
+ *  Jumpers:
+ *     JP2  - 2-3 (1) Boot Select
+ *     JP3  - 1-2 (0) Boot Select
+ *     JP4  - 1-2     SN0
+ *     JP5  - 2-3     SN1
+ *     JP6  - 1-2     SN2
+ *     JP11 - filled  +1.8V
+ *     JP13 - filled  +1.5V
+ *     JP14 - filled  +3.3V
+ *     JP20 - filled
+ *
+ *    $Revision: 41 $
+ **************************************************************************/
+
+#include <intrinsics.h>
+#include <stdio.h>
+#include "board.h"
+#include "arm926ej_cp15_drv.h"
+#include "ttbl.h"
+
+#define TIMER0_IN_FREQ        PCLK
+#define TIMER0_TICK_PER_SEC   10
+
+/*************************************************************************
+ * Function Name: IRQ_Handler
+ * Parameters: none
+ *
+ * Return: none
+ *
+ * Description: IRQ handler
+ *
+ *************************************************************************/
+__irq __arm void IRQ_Handler(void)
+{
+void (*interrupt_function)();
+unsigned int vector;
+
+  vector = VICADDRESS;     // Get interrupt vector.
+  interrupt_function = (void(*)())vector;
+  if(interrupt_function != NULL)
+  {
+    interrupt_function();  // Call vectored interrupt function.
+  }
+  else
+  {
+    VICADDRESS = 0;      // Clear interrupt in VIC.
+  }
+}
+
+/*************************************************************************
+ * Function Name: Timer0IntrHandler
+ * Parameters: none
+ *
+ * Return: none
+ *
+ * Description: Timer 0 interrupt handler
+ *
+ *************************************************************************/
+void Timer0IntrHandler (void)
+{
+  Timer0IntClr = 0;         // clear timer interrupt
+  GPIOBDATA_bit.PB0 ^= 1;   // toggle led pin
+  VICADDRESS = 0;
+}
+
+/*************************************************************************
+ * Function Name: VIC_SetVectoredIRQ
+ * Parameters:  void(*pIRQSub)()
+ *              unsigned int VicIrqSlot
+ *              unsigned int VicIntSouce
+ *
+ * Return: void
+ *
+ * Description:  Init vectored interrupts
+ *
+ *************************************************************************/
+void VIC_SetVectoredIRQ(void(*pIRQSub)(), unsigned int Priority,
+                        unsigned int VicIntSource)
+{
+unsigned long volatile *pReg;
+  // load base address of vectored address registers
+  pReg = &VICVECTADDR0;
+  // Set Address of callback function to corresponding Slot
+  *(pReg+VicIntSource) = (unsigned long)pIRQSub;
+  // load base address of ctrl registers
+  pReg = &VICVECTPRIORITY0;
+  // Set source channel and enable the slot
+  *(pReg+VicIntSource) = Priority;
+  // Clear FIQ select bit
+  VICINTSELECT &= ~(1<<VicIntSource);
+}
+
+/*************************************************************************
+ * Function Name: main
+ * Parameters: none
+ *
+ * Return: none
+ *
+ * Description: main
+ *
+ *************************************************************************/
+int main(void)
+{
+  // Init MMU
+  CP15_Mmu(FALSE);            // Disable MMU
+  // Privileged permissions  User permissions AP
+  // Read-only               Read-only        0
+  CP15_SysProt(FALSE);
+  CP15_RomProt(TRUE);
+
+  CP15_InitMmuTtb(TtSB,TtTB); // Build L1 and L2 Translation tables
+  CP15_SetTtb(L1Table);       // Set base address of the L1 Translation table
+  CP15_SetDomain( (DomainManager << 2*1) | (DomainClient << 0)); // Set domains
+  CP15_Mmu(TRUE);             // Enable MMU
+  CP15_Cache(TRUE);           // Enable ICache,DCache
+
+  // Set led pin (PB0) to output
+  GPIOBODE_bit.PB0ODE = 0;
+
+  // Init Time0
+  Timer0Control_bit.TIMEN = 0;    // disable timer
+  Timer0Control_bit.TIMMOD = 1;   // Period mode
+  Timer0Control_bit.TIMSIZE = 1;  // 16 bits
+  Timer0Control_bit.TIMPRS = 2;   // Set timer 0 prescaler /256
+  Timer0Control_bit.TIMOSCTL = 0; // Wrapping mode
+  // set timer 0 period
+  Timer0Load = (TIMER0_IN_FREQ)/(256 * TIMER0_TICK_PER_SEC);
+
+  // init timer 0 interrupt
+  Timer0IntClr = 0;         // clear timer interrupt
+  VIC_SetVectoredIRQ(Timer0IntrHandler,1,_INTR_TIMER01);
+  VICINTENABLE = 1<<_INTR_TIMER01;
+
+  __enable_interrupt();
+
+  Timer0Control_bit.TIMEN = 1;    // Enable timer
+  while(1)
+  {
+  }
+}

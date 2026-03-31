@@ -1,0 +1,5 @@
+execUserReset()
+{
+  __hwResetRunToBp(0, 0x80C000, 2000);
+}
+

@@ -1,0 +1,61 @@
+execUserPreload()
+{
+	__message "Executing execUserPreload() function\n";
+	__hwReset(0);
+	__InitMPU();
+	__DisableWDT();
+           
+  //Initialize Sysram before loading program
+  __fillMemory32(0x0, 0x10000000, "Memory", 0x2000, "Copy");
+  __fillMemory32(0x0, 0x10020000, "Memory", 0x2000, "Copy");  
+  __fillMemory32(0x0, 0x20000000, "Memory", 0x1000, "Copy");  
+}
+
+execUserReset()
+{
+	__message "Executing execUserReset() function\n";
+  //__hwReset(0);
+}
+
+__DisableWDT()
+{
+	//Disable WDT
+	__writeMemory32(0x00000001,0x4002E00C,"Memory");
+	__writeMemory32(0x00005354,0x4002E010,"Memory");
+	__message "Watchdog disabled\n";
+}
+
+__InitMPU()
+{
+  __var md;
+	// Setup Region-0: ATCM (Base: 0x00000000, Size: 1MB)
+	__jtagCP15WriteReg(6, 2, 0, 0, 0);
+	__jtagCP15WriteReg(6, 1, 0, 0, 0x00000000);
+	__jtagCP15WriteReg(6, 1, 0, 2, 0x00000027);
+	__jtagCP15WriteReg(6, 1, 0, 4, 0x0000060C);
+
+	// Setup Region-1: BTCM (Base: 0x10000000, Size: 256KB)
+	__jtagCP15WriteReg(6, 2, 0, 0, 1);
+	__jtagCP15WriteReg(6, 1, 0, 0, 0x10000000);
+	__jtagCP15WriteReg(6, 1, 0, 2, 0x00000023);
+	__jtagCP15WriteReg(6, 1, 0, 4, 0x0000030C);
+
+	// Setup Region-2: SRAM (Base: 0x20000000, Size: 16KB)
+	__jtagCP15WriteReg(6, 2, 0, 0, 2);
+	__jtagCP15WriteReg(6, 1, 0, 0, 0x20000000);
+	__jtagCP15WriteReg(6, 1, 0, 2, 0x0000001B);
+	__jtagCP15WriteReg(6, 1, 0, 4, 0x00001301);
+
+	// Setup Region-3: Peripheral (Base: 0x40000000, Size: 32MB)
+	__jtagCP15WriteReg(6, 2, 0, 0, 3);
+	__jtagCP15WriteReg(6, 1, 0, 0, 0x40000000);
+	__jtagCP15WriteReg(6, 1, 0, 2, 0x00000031);
+	__jtagCP15WriteReg(6, 1, 0, 4, 0x00001301);
+
+	md = __jtagCP15ReadReg(1, 0, 0, 0);
+	md = md | 0x1;
+	__jtagCP15WriteReg(7, 10, 0, 5, 0);
+	__jtagCP15WriteReg(7, 10, 0, 4, 0);
+	__jtagCP15WriteReg(1, 0, 0, 0, md);
+}
+

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <fileVersion>4</fileVersion>
+    <fileChecksum>1383453851</fileChecksum>
+    <configuration>
+        <name>Debug iFlash</name>
+        <outputs>
+            <file>$TOOLKIT_DIR$\CMSIS\Core\Include\core_cm3.h</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Core\Include\cmsis_version.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\iar_intrinsics_common.h</file>
+            <file>$PROJ_DIR$\readme.txt</file>
+            <file>$PROJ_DIR$\..\TX03_CMSIS\system_TMPM366F20A.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
+            <file>$PROJ_DIR$\..\TX03_CMSIS\system_TMPM366F20A.c</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+            <file>$PROJ_DIR$\Debug iFlash\Obj\system_TMPM366F20A.o</file>
+            <file>$PROJ_DIR$\Debug iFlash\Obj\GPIO.pbd</file>
+            <file>$PROJ_DIR$\main.c</file>
+            <file>$PROJ_DIR$\startup\startup_TMPM366F20A.s</file>
+            <file>$TOOLKIT_DIR$\inc\Toshiba\TMPM366F20A.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\iccarm_builtin.h</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Core\Include\cmsis_compiler.h</file>
+            <file>$PROJ_DIR$\Debug iFlash\Obj\main.pbi</file>
+            <file>$PROJ_DIR$\Debug iFlash\Obj\main.o</file>
+            <file>$PROJ_DIR$\Debug iFlash\Obj\startup_TMPM366F20A.o</file>
+            <file>$PROJ_DIR$\Debug iFlash\Obj\system_TMPM366F20A.pbi</file>
+            <file>$PROJ_DIR$\Debug iFlash\Exe\GPIO.out</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Core\Include\cmsis_iccarm.h</file>
+        </outputs>
+        <file>
+            <name>$PROJ_DIR$\..\TX03_CMSIS\system_TMPM366F20A.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 14</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 25</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 0 7 21 19 11 4 8 18 1 13 6 27 20</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\main.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 23</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 22</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 6 27 13 18 20 4 7 21 19 9 5 8 11 2 0 1 12</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\startup\startup_TMPM366F20A.s</name>
+            <outputs>
+                <tool>
+                    <name>AARM</name>
+                    <file> 24</file>
+                </tool>
+            </outputs>
+        </file>
+        <file>
+            <name>[ROOT_NODE]</name>
+            <outputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 26</file>
+                </tool>
+            </outputs>
+        </file>
+        <forcedrebuild>
+            <name>[MULTI_TOOL]</name>
+            <tool>ILINK</tool>
+        </forcedrebuild>
+        <forcedrebuild>
+            <name>[REBUILD_ALL]</name>
+        </forcedrebuild>
+    </configuration>
+    <configuration>
+        <name>Debug iRAM</name>
+        <outputs>
+            <file>$TOOLKIT_DIR$\CMSIS\Core\Include\core_cm3.h</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Core\Include\cmsis_version.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\iar_intrinsics_common.h</file>
+            <file>$PROJ_DIR$\readme.txt</file>
+            <file>$PROJ_DIR$\..\TX03_CMSIS\system_TMPM366F20A.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\io_macros.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
+            <file>$PROJ_DIR$\..\TX03_CMSIS\system_TMPM366F20A.c</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+            <file>$PROJ_DIR$\main.c</file>
+            <file>$PROJ_DIR$\startup\startup_TMPM366F20A.s</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmInstr.h</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmFunc.h</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm3.h</file>
+            <file>$TOOLKIT_DIR$\inc\Toshiba\TMPM366F20A.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+            <file>$PROJ_DIR$\Debug iRAM\Obj\main.o</file>
+            <file>$TOOLKIT_DIR$\inc\c\iccarm_builtin.h</file>
+            <file>$PROJ_DIR$\Debug iRAM\Obj\main.pbi</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Core\Include\cmsis_compiler.h</file>
+            <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
+            <file>$TOOLKIT_DIR$\lib\m7M_tl.a</file>
+            <file>$PROJ_DIR$\Debug iRAM\List\GPIO.map</file>
+            <file>$PROJ_DIR$\Debug iRAM\Obj\system_TMPM366F20A.pbi</file>
+            <file>$PROJ_DIR$\Debug iRAM\Obj\startup_TMPM366F20A.o</file>
+            <file>$PROJ_DIR$\Debug iRAM\Obj\GPIO.pbd</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Core\Include\cmsis_iccarm.h</file>
+            <file>$PROJ_DIR$\Debug iRAM\Exe\GPIO.out</file>
+            <file>$PROJ_DIR$\Debug iRAM\Obj\system_TMPM366F20A.o</file>
+            <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
+            <file>$PROJ_DIR$\TMPM366F20A_RAM.icf</file>
+            <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
+        </outputs>
+        <file>
+            <name>$PROJ_DIR$\..\TX03_CMSIS\system_TMPM366F20A.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 38</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 33</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 23 22 8 24 16 7 9 13 17 25 20 14 11 21 4</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 0 8 29 24 13 4 9 23 1 16 7 36 27</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\main.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 26</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 28</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 15 24 16 7 9 13 17 25 6 5 11 10 23 22 8 20 14 21 4</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 7 36 16 23 27 4 8 29 24 11 6 9 13 2 0 1 15</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\startup\startup_TMPM366F20A.s</name>
+            <outputs>
+                <tool>
+                    <name>AARM</name>
+                    <file> 34</file>
+                </tool>
+            </outputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Debug iRAM\Exe\GPIO.out</name>
+            <outputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 32</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 40 26 34 38 39 30 31 41</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>[ROOT_NODE]</name>
+            <outputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 37 32</file>
+                </tool>
+            </outputs>
+        </file>
+        <forcedrebuild>
+            <name>[REBUILD_ALL]</name>
+        </forcedrebuild>
+    </configuration>
+</project>

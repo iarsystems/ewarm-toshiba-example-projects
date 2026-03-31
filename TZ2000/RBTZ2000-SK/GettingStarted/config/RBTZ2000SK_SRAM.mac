@@ -1,0 +1,35 @@
+setup()
+{
+__var Reg;
+
+  // Enable I Cache
+  // Disable MMU and enable ICache
+  Reg = __jtagCP15ReadReg(1, 0, 0, 0);
+  Reg &= 0xFFFFFFFA;
+  Reg |= 1<<12;
+  __jtagCP15WriteReg(1, 0, 0, 0, Reg);
+
+  // Turn on clock for SPIB0
+  __writeMemory32(0x01000111, 0x0044142C, "Memory"); // ClockGatingOff_periSS_3
+  __writeMemory32(0x01000111, 0x00441C2C, "Memory"); // SoftResetOff_periSS_3
+  __writeMemory32(0x00030111, 0x004415C0, "Memory"); // ClockGatingOff_telomereSS_0
+  __writeMemory32(0x00010100, 0x00441DC0, "Memory"); // SoftResetOff_telomereSS_0
+
+  // Configure SPIB0 for FAST_READ single mode, set 16MB devices, 50MHz clock
+  __writeMemory32(0x20000021, 0x08050000, "Memory"); // SPIB0_FlshMemMap0
+  __writeMemory32(0x20000021, 0x08050004, "Memory"); // SPIB0_FlshMemMap1
+  __writeMemory32(0x000B0500, 0x08050008, "Memory"); // SPIB0_DirAccCtrl0
+  __writeMemory32(0x000B0500, 0x0805000C, "Memory"); // SPIB0_DirAccCtrl1
+  __writeMemory32(0x0B001000, 0x08050010, "Memory"); // SPIB0_DirRdCtrl0
+  __writeMemory32(0x0B001000, 0x08050014, "Memory"); // SPIB0_DirRdCtrl1
+}
+
+execUserReset()
+{
+  setup();
+}
+
+execUserPreload()
+{
+  setup();
+}

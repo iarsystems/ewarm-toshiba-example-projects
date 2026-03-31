@@ -1,0 +1,19 @@
+execUserPreload()
+{
+	__message "Executing execUserPreload() function\n";
+	_Disable_WDT();
+}
+
+execUserReset()
+{
+	__message "Executing execUserReset() function\n";
+	_Disable_WDT();
+}
+
+_Disable_WDT()
+{
+	//Disable WDT
+	__message "-----  Disable WDT  -----";
+	__writeMemory32(0x00,0x40040000,"Memory");
+	__writeMemory32(0xB1,0x40040004,"Memory");
+}

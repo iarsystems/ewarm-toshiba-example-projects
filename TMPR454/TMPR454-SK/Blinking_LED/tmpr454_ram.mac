@@ -1,0 +1,21 @@
+execUserPreload()
+{
+	__message "Executing execUserPreload() function\n";
+	__DisableWDT();
+  
+  //Initialize Sysram before loading program
+  __fillMemory32(0x0, 0x10000000, "Memory", 0x2000, "Copy");
+}
+
+execUserReset()
+{
+	__message "Executing execUserReset() function\n";
+}
+
+__DisableWDT()
+{
+	//Disable WDT
+	__writeMemory32(0x00000001,0x4002E00C,"Memory");
+	__writeMemory32(0x00005354,0x4002E010,"Memory");
+	__message "Watchdog disabled\n";
+}

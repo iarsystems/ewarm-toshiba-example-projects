@@ -1,0 +1,44 @@
+########################################################################
+#
+#                           pulsating_led.eww
+#
+# $Revision: 379 $
+#
+########################################################################
+
+DESCRIPTION
+===========
+  This example project shows how to use the IAR Embedded Workbench for ARM
+  to develop code for the Toshiba RBTZ1001. It shows basic initialization of
+  the Toshiba RBTZ1001 device. Also configures clock gatings, controls reset to
+  the modules, turns-on the stopped oscillators, and configures the voltage mode.
+  It uses the AdvTMR peripheral and configures its channels (2 and 3) in PWM mode.
+
+  The result of the example is alternating red and green pulsating LED1 light.
+
+COMPATIBILITY
+=============
+  The Pulsating LED example project is compatible with Toshiba RBTZ1001-4MA board.
+  By default, the project is configured to use the I-Jet JTAG/SWD interface.
+
+CONFIGURATION
+=============
+  Flash_Debug - The Progam is loaded to internal Flash. It uses the SPI XiP boot mode.
+  RAM_Debug - The Progam is loaded to RAM.
+
+  Make sure that the following jumpers are correctly configured on the
+  RBTZ1001-4MA board:
+
+  Jumpers:
+  JP1:
+    BOOT_0 - open
+    BOOT_1 - open
+    BOOT_2 - open
+    BOOT_4 - open
+
+GETTING STARTED
+===============
+  1) Connect the I-Jet and power-up the board by connecting USB to the PC Host.
+  2) Select a configuration.
+  3) Build and download the example.
+  4) Run the program.

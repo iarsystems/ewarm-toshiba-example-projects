@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd"
+     xml:lang="en">
+  <head>
+    <title>Information Center for ARM</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    <link type="text/css" rel="stylesheet" media="all" href="file://$TOOLKIT_DIR$/doc/infocenter/style/ewic.css" />
+  </head>
+  <body>
+  <div id="topbanner"></div>
+  <div id="titlebanner_small">
+    <h2>Information Center for ARM</h2>
+  </div>
+  <div class="breadcrumb"><a href="$TOOLKIT_DIR$/doc/infocenter/index.JPN.html">Information Center for ARM</a> | EXAMPLES</div>
+  <div class="mainblock">
+   <h2>Example description</h2>
+
+   <pre>  <!--Insert readme.txt-->
+Pulsating LED example
+
+DESCRIPTION
+===========
+  This example project shows how to use the IAR Embedded Workbench for ARM
+  to develop code for the Toshiba RBTZ1001. It shows basic initialization of
+  the Toshiba RBTZ1001 device. Also configures clock gatings, controls reset to
+  the modules, turns-on the stopped oscillators, and configures the voltage mode.
+  It uses the AdvTMR peripheral and configures its channels (2 and 3) in PWM mode.
+
+  The result of the example is alternating red and green pulsating LED1 light.
+
+COMPATIBILITY
+=============
+  The Pulsating LED example project is compatible with Toshiba RBTZ1001-4MA board.
+  By default, the project is configured to use the I-Jet JTAG/SWD interface.
+
+CONFIGURATION
+=============
+  Flash_Debug - The Progam is loaded to internal Flash. It uses the SPI XiP boot mode.
+  RAM_Debug - The Progam is loaded to RAM.
+
+  Make sure that the following jumpers are correctly configured on the
+  RBTZ1001-4MA board:
+
+  Jumpers:
+  JP1:
+    BOOT_0 - open
+    BOOT_1 - open
+    BOOT_2 - open
+    BOOT_4 - open
+
+GETTING STARTED
+===============
+  1) Connect the I-Jet and power-up the board by connecting USB to the PC Host.
+  2) Select a configuration.
+  3) Build and download the example.
+  4) Run the program.
+
+     </pre>
+
+  </div>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

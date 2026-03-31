@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<infocenter_data version="1.0">
+  <iar_name>TC35681FSG_Template</iar_name>                                          <!--App-->
+  <iar_description>
+   It demonstrates how to initialize the application and how to create
+   an entry point
+  </iar_description><!--App short description-->
+  <iar_curdir>$CUR_DIR$</iar_curdir>
+</infocenter_data>

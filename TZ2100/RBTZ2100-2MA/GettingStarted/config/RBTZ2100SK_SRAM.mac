@@ -1,0 +1,31 @@
+setup()
+{
+__var Reg;
+
+  // Enable I Cache
+  // Disable MMU and enable ICache
+  Reg = __jtagCP15ReadReg(1, 0, 0, 0);
+  Reg &= 0xFFFFFFFA;
+  Reg |= 1<<12;
+//To disable I Cache, comment out following line
+  __jtagCP15WriteReg(1, 0, 0, 0, Reg);
+
+}
+
+execUserReset()
+{
+ if(!using_bootloader) {
+  __message("execUserReset");
+//  __hwReset(0);
+  setup();
+ }
+}
+
+execUserPreload()
+{
+ if(!using_bootloader) {
+  __message("execUserPreload");
+//  __hwReset(0);
+  setup();
+ }
+}

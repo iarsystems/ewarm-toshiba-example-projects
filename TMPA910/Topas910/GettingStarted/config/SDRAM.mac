@@ -1,0 +1,199 @@
+
+setup()
+{
+__var Reg;
+  // Disable MMU and enable ICache
+  Reg = __jtagCP15ReadReg(1, 0, 0, 0);
+  Reg &= 0xFFFFFFFA;
+  Reg |= 1<<12;
+  __jtagCP15WriteReg(1, 0, 0, 0, Reg);
+  __message "Enable I Cache\n";
+  
+  // Disable WDT 
+  __writeMemory32(0x1ACCE551,0xF0010C00,"Memory");  // WdogLock = 0x1ACCE551;
+  __writeMemory32(0,0xF0010008,"Memory");           // WdogControl = 0;   
+  __writeMemory32(0,0xF0010C00,"Memory");           // WdogLock = 0;
+  
+  // Init PLL and clocks
+  //if(SYSCR5_bit.PROTECT)
+  //{
+  //  // System registers unlock
+  //  SYSCR6 = 0x5A;
+  //  SYSCR7 = 0xA5;
+  //  SYSCR6 = 0xA5;
+  //  SYSCR7 = 0x5A;
+  //}
+  Reg = __readMemory32(0xF0050014, "Memory");
+  
+  if(1 & Reg)
+  {
+    __writeMemory32(0x5A, 0xF0050018, "Memory");
+    __writeMemory32(0xA5, 0xF005001C, "Memory");
+    __writeMemory32(0xA5, 0xF0050018, "Memory");
+    __writeMemory32(0x5A, 0xF005001C, "Memory");
+  }
+  
+  // switch to main osc
+  //SYSCR2_bit.FCSEL = 0;
+  __writeMemory32(0, 0xF0050008, "Memory");
+  __writeMemory32(0x0, 0xF005000C, "Memory");
+  
+  // Set clock gear divider ot /1
+  //SYSCR1_bit.GEAR = 0;
+  __writeMemory32(0, 0xF0050004, "Memory");
+  
+  // Set MPMC SRAM/ROM Clock = FCLK/2, TMR0..5 = FCLK/2
+  //CLKCR5_bit.SEL_SMC_MCLK = 1;
+  __writeMemory32(0xFF, 0xF0050054, "Memory");
+  
+  // Init PLL
+  //SYSCR3_bit.ND = 7;      // *8
+  // enable PLL
+  //SYSCR3_bit.PLLON = 1;
+  __writeMemory32(0x7 | (1UL << 7), 0xF005000C, "Memory");
+  
+  // Wait untill PLL lock frequency
+  __delay(10);
+  
+  // switch to clock from the PLL
+  //SYSCR2_bit.FCSEL = 1;
+  __writeMemory32(2, 0xF0050008, "Memory");
+  
+  // Init SDRAM
+  // Init MPMC0 (dinamic SDR memory controller)
+  //if(1 == dmc_memc_status_3_bit.memc_status)
+  //{
+  //  dmc_memc_cmd_3 = 3;                         // pause
+  //  while(2 != dmc_memc_status_3_bit.memc_status);
+  //}
+  Reg = __readMemory32(0xF4300000, "Memory");
+  if(1 == (3 & Reg))
+  {
+    __writeMemory32(0x3, 0xF4300004, "Memory");
+    __delay(1);
+  }
+
+  //dmc_memc_cmd_3 = 4;                         // Configure
+  __writeMemory32(0x4, 0xF4300004, "Memory");
+
+  //dmc_user_config_3 = 1;                      // 32 bits bus
+  __writeMemory32(0x1, 0xF4300304, "Memory");
+
+  //dmc_cas_latency_3_bit.cas_latency = 3;      // CAS
+  __writeMemory32(0x6, 0xF4300014, "Memory");
+  //dmc_t_dqss_3_bit.t_dqss = 0;                // DQS setting
+  __writeMemory32(0x0, 0xF4300018, "Memory");
+  //dmc_t_mrd_3_bit.t_mrd = SDRAM_TMRD;         // Mode register command time
+  __writeMemory32(0x2, 0xF430001C, "Memory");
+  //dmc_t_ras_3_bit.t_ras = _P2C(SDRAM_TRAS);   // Time between RAS and Precharge
+  __writeMemory32(0x5, 0xF4300020, "Memory");
+  //dmc_t_rc_3_bit.t_rc = _P2C(SDRAM_TRC);      // Time between RAS and Precharge
+  __writeMemory32(0x6, 0xF4300024, "Memory");
+  //dmc_t_rcd_3_bit.t_rcd = _P2C(SDRAM_TRCD);   // Set min delay from RAS to CAS
+  __writeMemory32(0x1A, 0xF4300028, "Memory");
+  //dmc_t_rfc_3_bit.t_rfc = _P2C(SDRAM_TRFC);   // Set autorefresh command time setting
+  __writeMemory32(0x1E6, 0xF430002C, "Memory");
+  //dmc_t_rp_3_bit.t_rp = _P2C(SDRAM_TRP);      // Precharge delay setting to RAS
+  __writeMemory32(0x1A, 0xF4300030, "Memory");
+  //dmc_t_rrd_3_bit.t_rrd = _P2C(SDRAM_TRRD);   // Delay from Active bank A to Active bank B
+  __writeMemory32(0x2, 0xF4300034, "Memory");
+  //dmc_t_wr_3_bit.t_wr = SDRAM_TWR;            // Delay from write to Precharge
+  __writeMemory32(0x2, 0xF4300038, "Memory");
+  //dmc_t_wtr_3_bit.t_wtr = SDRAM_TWR;          // Delay from write to read
+  __writeMemory32(0x2, 0xF430003C, "Memory");
+  //dmc_t_xp_3_bit.t_xp = 1;                    // Set the exit power-down command time
+  __writeMemory32(0x1, 0xF4300040, "Memory");
+  //dmc_t_xsr_3_bit.t_xsr = _P2C(SDRAM_TXSR);   // Set time between the Exit self-refresh command and Exit
+  __writeMemory32(0x7, 0xF4300044, "Memory");
+  // dmc_t_esr_3_bit.t_esr = 20;                // Set minimum time from self-refresh Entry to Exit
+  __writeMemory32(20, 0xF4300048, "Memory");
+  //dmc_refresh_prd_3 = _P2C(SDRAM_REFRESH);
+  __writeMemory32(0x2EE, 0xF4300010, "Memory");
+
+  //dmc_memory_cfg_3_bit.column_bits      = 1;  // col - 9
+  //dmc_memory_cfg_3_bit.row_bits         = 2;  // row - 13
+  //dmc_memory_cfg_3_bit.ap_bit           = 0;  // Auto-precharge bit Addr10 line
+  //dmc_memory_cfg_3_bit.auto_power_down  = 0;  // disable auto powerdown
+  //dmc_memory_cfg_3_bit.stop_mem_clock   = 0;  // enable memory clock
+  //dmc_memory_cfg_3_bit.memory_burst     = 3;  // Burst 8
+  __writeMemory32(0x1UL | (0x2UL << 3) | (3UL << 15), 0xF430000C, "Memory");
+
+  //dmc_chip_0_cfg_3_bit.brc_n_rbc = 1;         // bank, row, column
+  //dmc_chip_0_cfg_3_bit.address_match = 0x40;  // 0x4xxx xxxx - 0x5xxx xxxx
+  //dmc_chip_0_cfg_3_bit.address_mask  = 0xE0;
+  __writeMemory32(0xE0UL | (0x40UL << 8) | (1UL << 16), 0xF4300200, "Memory");
+
+  // SDRAM Initialization Sequence
+  // DELAY to allow power and clocks to stabilize ~100 us
+  //Dly_us(100);
+  __delay(1);
+
+  // NOP
+  //dmc_direct_cmd_3 = 3UL<<18;
+  __writeMemory32(3UL<<18, 0xF4300008, "Memory");
+  __delay(1);
+
+  // PALL
+  //dmc_direct_cmd_3 = 0;
+  __writeMemory32(0x0, 0xF4300008, "Memory");
+
+  //Dly_us(100);
+  __delay(1);
+
+  // AUTOREFRESH x 2
+  //dmc_direct_cmd_3 = 1UL<<18;
+  __writeMemory32(1UL<<18, 0xF4300008, "Memory");
+  //for(volatile Int32U i= 128; i; --i);
+  __delay(1);
+  //dmc_direct_cmd_3 = 1UL<<18;
+  __writeMemory32(1UL<<18, 0xF4300008, "Memory");
+  //for(volatile Int32U i= 128; i; --i);
+  __delay(1);
+
+  // COMM
+  // Burst 8, Sequential, CAS-3
+  //dmc_direct_cmd_3 = (2UL << 18)
+  //                 | (3UL << 0)   // Burst 8
+  //                 | (3UL << 4)   // CAS 3
+  //                   ;
+  __writeMemory32((2UL << 18) | (3UL << 4) | 3UL, 0xF4300008, "Memory");
+
+  // NOP
+  //dmc_direct_cmd_3 = 3UL<<18;
+  __writeMemory32(3UL<<18, 0xF4300008, "Memory");
+  // NORM
+  //dmc_memc_cmd_3 = 0;
+  __writeMemory32(0x0, 0xF4300004, "Memory");
+  __delay(1);
+
+  // Init VIC
+  // Init interrupt controller
+  // Assign all interrupt channels to IRQ
+  //VICINTSELECT  =  0;
+  __writeMemory32(0,0xF400000C,"Memory");
+  // Disable all interrupts
+  //VICINTENCLEAR = 0xFFFFFFFF;
+  __writeMemory32(0xFFFFFFFF,0xF4000014,"Memory");
+  // Clear all software interrupts
+  //VICSOFTINTCLEAR = 0xFFFFFFFF;
+  __writeMemory32(0xFFFFFFFF,0xF400001C,"Memory");
+  // VIC registers can be accessed in User or privileged mode
+  //VICPROTECTION = 0;
+  __writeMemory32(0,0xF4000020,"Memory");
+  // Clear interrupt
+  //VICADDRESS = 0;
+  __writeMemory32(0,0xF4000F00,"Memory");
+  
+  // Remap SRAM3 on 0x0
+  __writeMemory32(1,0xF0000004,"Memory");
+
+}
+
+execUserPreload()
+{
+  // Halt CPU immediately after reset
+  __message "Executing execUserPreload() function\n";
+  __message "Reset controller and halt on addr 0\n";
+  __hwReset(0);
+  setup();
+}

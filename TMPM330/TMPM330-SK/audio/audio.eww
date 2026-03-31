@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<workspace>
+  <project>
+    <path>$WS_DIR$/AUDIO.ewp</path>
+  </project>
+  <batchBuild>
+    <batchDefinition>
+      <name>All</name>
+      <member>
+        <project>AUDIO</project>
+        <configuration>FLASH</configuration>
+      </member>
+      <member>
+        <project>AUDIO</project>
+        <configuration>RAM</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
+</workspace>

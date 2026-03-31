@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<workspace>
+  <project>
+    <path>$WS_DIR$/Blinking_LED.ewp</path>
+  </project>
+  <batchBuild>
+    <batchDefinition>
+      <name>All</name>
+      <member>
+        <project>Blinking_LED</project>
+        <configuration>Debug iFlash</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
+</workspace>

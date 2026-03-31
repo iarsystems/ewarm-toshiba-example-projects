@@ -1,0 +1,502 @@
+/* 1.17.0 */
+/* Called after communication with the target system is established but before downloading the target application. */
+execUserPreload ()
+{
+  // __message("execUserPreload\n");
+  SoftwareSystemReset ();
+}
+
+/* Called once after the target application is downloaded. */
+execUserSetup () {
+  // __message("execUserSetup\n");
+}
+
+/* Called once when the debug session ends. */
+execUserExit () {
+  // __message("execUserExit\n");
+}
+
+/* Called when the debugger is about to start or resume execution. */
+execUserExecutionStarted () {
+  // __message("execUserExecutionStarted\n");
+}
+
+/* Called when the debugger has stopped execution. */
+execUserExecutionStopped () {
+  // __message("execUserExecutionStopped\n");
+}
+
+/* Called each time just before the reset command is issued. */
+execUserPreReset () {
+  // __message("execUserPreReset\n");
+  SoftwareSystemReset ();
+}
+
+/* Called each time the reset command is issued. */
+execUserReset () {
+  // __message("execUserReset\n");
+  EnableTracePort ();
+  EnableSWO();
+}
+
+/* Called once before the flash loader is downloaded to RAM. */
+execUserFlashInit()
+{
+  // __message("execUserFlashInit\n");
+  SoftwareSystemReset ();
+}
+
+/* Called once after the flash loader is downloaded to RAM, but before execution of the flash loader. */
+execUserFlashReset () {
+  // __message("execUserFlashReset\n");
+}
+
+/* Called once when the debug session ends. */
+execUserFlashExit () {
+  // __message("execUserFlashExit\n");
+}
+
+CheckSequencerStatus() {
+  // 1.
+  __var stat;
+
+  do {
+    stat = __readMemory32(0x40000710, "Memory");     // POWERDOMAIN_CTRL
+  } while (0 != stat);
+
+  do {
+    stat = __readMemory32(0x40000700, "Memory");     // MOVE_VOLTAGE_START
+    stat &= 1;
+  } while (0 != stat);
+}
+
+InitializeDCDC() {
+  // 2.
+  __writeMemory32(0x00010000, 0x400001C0, "Memory");  // CG_OFF_HARDMACRO
+  __writeMemory32(0x80040000, 0x40000528, "Memory");  // CONFIG_DCDC_LVREG_1
+}
+
+TrimClockSourceMacro() {
+  // 3.
+  __var val;
+
+  val = __readMemory32(0x400005e4, "Memory");       // EFUSE_SiOSC4M
+  __writeMemory32(0x00001000, 0x400005C0, "Memory"); // SELECT_EFUSE
+  __writeMemory32(0x00000011, 0x40002108, "Memory"); // CONFIG_SiOSC4M
+  __writeMemory32(val,        0x40002188, "Memory"); // OVERRIDE_EFUSE_SiOSC4M
+  __writeMemory32(0x00000001, 0x40002108, "Memory"); // CONFIG_SiOSC4M
+}
+
+InitializeVoltageMode () {
+  // 4.
+  __var stat;
+
+  __writeMemory32(0x00a01e1e, 0x40000748, "Memory");  // WAITTIME_DVSCTL
+  __writeMemory32(0x00000000, 0x40000704, "Memory");  // MOVE_POWER_VOLTAGE_MODE
+  __writeMemory32(0x00000001, 0x40000700, "Memory");  // MOVE_VOLTAGE_START
+  do {
+    stat = __readMemory32(0x40000700, "Memory");     // MOVE_VOLTAGE_START
+  } while (0 != stat);
+  __writeMemory32(0x00000000, 0x40000730, "Memory");  // VOLTAGEMODE_SETTING
+}
+
+InitializeClockSource() {
+  // 5.
+  __writeMemory32(0x00000000, 0x40000404, "Memory"); // CSM_MAIN
+  __writeMemory32(0x00000000, 0x40000408, "Memory"); // CSM_CPUTRC
+  __writeMemory32(0x00000000, 0x4000040C, "Memory"); // CSM_CPUST
+  __writeMemory32(0x00000000, 0x40000414, "Memory"); // CSM_UART0
+  __writeMemory32(0x00000000, 0x40000418, "Memory"); // CSM_UART1
+  __writeMemory32(0x00000000, 0x4000041C, "Memory"); // CSM_UART2
+  __writeMemory32(0x00000000, 0x40000420, "Memory"); // CSM_ADCC12A
+  __writeMemory32(0x00000000, 0x40000424, "Memory"); // CSM_ADCC24A
+}
+
+InitializePrescaler() {
+  // 6.
+  __writeMemory32(0x00111111, 0x40000484, "Memory"); // PRESCAL_MAIN
+  __writeMemory32(0x00000001, 0x4000048C, "Memory"); // PRESCAL_CPUST
+  __writeMemory32(0x00000001, 0x40000494, "Memory"); // PRESCAL_UART0
+  __writeMemory32(0x00000001, 0x40000498, "Memory"); // PRESCAL_UART1
+  __writeMemory32(0x00000001, 0x4000049C, "Memory"); // PRESCAL_UART2
+  __writeMemory32(0x00000001, 0x400004A0, "Memory"); // PRESCAL_ADCC12A
+  __writeMemory32(0x00000001, 0x400004A4, "Memory"); // PRESCAL_ADCC24A
+}
+
+InitializeAndPowerOnPLL() {
+  // 7.
+  __var stat;
+
+  // 7-1.
+  stat = __readMemory32(0x40000500, "Memory");        // CONFIG_OSC12M.OSC12M_EN
+  if (0 == stat) {  // OSC12M stopped
+    // 7-2.
+    __writeMemory32(0x00000001, 0x40000500, "Memory"); // CONFIG_OSC12M
+    __delay(10);
+  }
+  // 7-3.
+  stat = __readMemory32(0x40002444, "Memory");      // PSW_PLL
+  if (0 == stat) {
+    // 7-4.
+    __writeMemory32(0x00000001, 0x40002444, "Memory"); // PSW_PLL
+    __writeMemory32(0x00000003, 0x40002444, "Memory"); // PSW_PLL
+  }
+  // 7-5.
+  stat = __readMemory32(0x40002544, "Memory");      // ISO_PLL
+  if (3 == stat) {
+    // 7-6.
+    __writeMemory32(0x00000000, 0x40002544, "Memory"); // ISO_PLL
+  }
+  // 7-7.
+  __writeMemory32(0x80000001, 0x40000508, "Memory"); // CONFIG_PLL_0
+  __writeMemory32(0x00000093, 0x4000050c, "Memory"); // CONFIG_PLL_1
+  __delay(1);
+  __writeMemory32(0x00000000, 0x40000508, "Memory"); // CONFIG_PLL_0
+  __delay(1);
+}
+
+StartUSB() {
+  // 8.
+  __writeMemory32(0x00000000, 0x40000410, "Memory"); // CSM_USBI
+  // 9.
+  __writeMemory32(0x00000001, 0x40000490, "Memory"); // PRESCAL_USBI
+}
+
+InitializePU() {
+  // 10. clock and reset
+  __writeMemory32(0x0000000d, 0x4000032C, "Memory"); // SRST_ON_PU
+  __writeMemory32(0x00000010, 0x4000032C, "Memory"); // SRST_ON_PU
+  __writeMemory32(0x00000100, 0x40000000, "Memory"); // CG_ON_POWERDOMAIN
+
+  // 11. isolation
+  __writeMemory32(0x00000003, 0x40002520, "Memory"); // ISO_PU
+
+  // 12. turn off power-switches
+  __writeMemory32(0x00000000, 0x40002450, "Memory"); // PSW_IO_USB
+  __writeMemory32(0x00000000, 0x40002420, "Memory"); // PSW_PU
+  __writeMemory32(0x00000000, 0x40002454, "Memory"); // PSW_HARDMACRO
+}
+
+StopUSB () {
+  // 13.
+  __writeMemory32(0x00000000, 0x40000490, "Memory"); // PRESCAL_USBI
+}
+
+InitializeClockSourceMain () {
+  __var seq;
+  __var val;
+
+  // 14-0 check efuse
+  seq  = __readMemory32(0x400005E0, "Memory");  // EFUSE_BOOTSEQ
+  seq &= 3;
+  if (0 == seq) {
+      // 14-a
+      val = __readMemory32(0x40000500, "Memory"); // CONFIG_OSC_12M.OSC12M_EN
+      if (0 == (val & 1)) {
+          // 14-a-2
+          __writeMemory32(0x00000001, 0x40000500, "Memory"); // OSC12M_EN
+          __delay(10);
+      }
+      // 14-a-3
+      val = __readMemory32(0x40002444, "Memory"); // PSW_PLL
+      if (0 == (val & 3)) {
+          // 14-a-4
+          __writeMemory32(0x00000001, 0x40002444, "Memory"); // PSW_PLL
+          __writeMemory32(0x00000003, 0x40002444, "Memory"); // PSW_PLL
+      }
+      // 14-a-5
+      val = __readMemory32(0x40002544, "Memory"); // ISO_PLL
+      if (3 == (val & 3)) {
+          // 14-a-6
+          __writeMemory32(0x00000000, 0x40002544, "Memory"); // ISO_PLL
+      }
+      // 14-a-7
+      val = __readMemory32(0x40000508, "Memory"); // CONFIG_PLL_0.PLL_BP
+      if (1 == (val & 1)) {
+          // 14-a-8
+          __writeMemory32(0x00000001, 0x40000508, "Memory"); // CONFIG_PLL_0
+          __delay(1);
+          __writeMemory32(0x00000000, 0x40000508, "Memory"); // CONFIG_PLL_0
+          __delay(1);
+      }
+      // 14-a-9
+      __writeMemory32(0x00000002, 0x40000404, "Memory"); // CSM_MAIN
+  } else if (1 == seq) {
+      // 14-b
+      val = __readMemory32(0x40000500, "Memory"); // OSC12M_EN
+      if (0 == (val & 1)) {
+          // 14-b-2
+          __writeMemory32(0x00000001, 0x40000500, "Memory"); // OSC12M_EN
+          __delay(10);
+      }
+      // 14-b-3
+      __writeMemory32(0x00000001, 0x40000404, "Memory"); // CSM_MAIN
+      // 14-b-4
+      val = __readMemory32(0x40000508, "Memory"); // CONFIG_PLL_0.PLL_BP
+      if (0 == (val & 1)) {
+      // 14-b-5
+          __writeMemory32(0x00000001, 0x40000508, "Memory"); // CONFIG_PLL_0
+      }
+      // 14-b-6
+      val = __readMemory32(0x40002544, "Memory"); // ISO_PLL
+      if (0 == (val & 3)) {
+          // 14-b-7
+          __writeMemory32(0x00000003, 0x40002544, "Memory"); // ISO_PLL
+      }
+      // 14-b-8
+      val = __readMemory32(0x40002444, "Memory"); // PSW_PLL
+      if (3 == (val & 3)) {
+          // 14-b-9
+          __writeMemory32(0x00000000, 0x40002444, "Memory"); // PSW_PLL
+      }
+  } else {
+      // 14-c-1
+      __writeMemory32(0x00000000, 0x40000404, "Memory"); // CSM_MAIN
+      // 14-c-2
+      val = __readMemory32(0x40000500, "Memory"); // CONFIG_OSC_12M.OSC12M_EN
+      if (0 == (val & 1)) {
+          break;
+      }
+      // 14-c-3
+      __writeMemory32(0x00000000, 0x40000500, "Memory"); // CONFIG_OSC_12M
+      // 14-c-4
+      val = __readMemory32(0x40000508, "Memory"); // CONFIG_PLL_0.PLL_BP
+      if (0 == (val & 1)) {
+          // 14-b-5
+          __writeMemory32(0x00000001, 0x40000508, "Memory"); // CONFIG_PLL_0
+      }
+      // 14-c-6
+      val = __readMemory32(0x40002544, "Memory"); // ISO_PLL
+      if (0 == (val & 3)) {
+          // 14-c-7
+          __writeMemory32(0x00000003, 0x40002544, "Memory"); // ISO_PLL
+      }
+      // 14-c-8
+      val = __readMemory32(0x40002444, "Memory"); // PSW_PLL
+      if (3 == (val & 3)) {
+          // 14-c-9
+          __writeMemory32(0x00000000, 0x40002444, "Memory"); // PSW_PLL
+      }
+  }
+}
+
+PowerOnDomain() {
+  __var stat;
+
+  __writeMemory32(0x001e001e, 0x40000740, "Memory"); // WAITTIME_LDOF
+  __writeMemory32(0x000f000f, 0x40000744, "Memory"); // WAITTIME_PSW
+
+  // 15-1
+  __writeMemory32(0x00000000, 0x40000714, "Memory"); // POWERDOMAIN_CTRL_MODE
+  __writeMemory32(0x00000e00, 0x40000710, "Memory"); // POWERDOMAIN_CTRL
+  do {
+    stat = __readMemory32(0x40000718, "Memory");         // POWERDOMAIN_CTRL_STATUS
+  } while (0 != (stat & 0xffff3003));
+  // 15-2
+  __writeMemory32(0x00000000, 0x40000714, "Memory"); // POWERDOMAIN_CTRL_MODE
+  __writeMemory32(0x000000a4, 0x40000710, "Memory"); // POWERDOMAIN_CTRL
+  do {
+    stat = __readMemory32(0x40000718, "Memory");         // POWERDOMAIN_CTRL_STATUS
+  } while (0 != (stat & 0xfffffc33));
+  __delay(12);
+  // 15-3
+  __writeMemory32(0x00000000, 0x40000714, "Memory"); // POWERDOMAIN_CTRL_MODE
+  __writeMemory32(0x00000012, 0x40000710, "Memory"); // POWERDOMAIN_CTRL
+  do {
+    stat = __readMemory32(0x40000718, "Memory");         // POWERDOMAIN_CTRL_STATUS
+  } while (0 != (stat & 0xffffff3f));
+  // 15-4
+  __writeMemory32(0x00000000, 0x40000714, "Memory"); // POWERDOMAIN_CTRL_MODE
+  __writeMemory32(0x00000008, 0x40000710, "Memory"); // POWERDOMAIN_CTRL
+  do {
+    stat = __readMemory32(0x40000718, "Memory");         // POWERDOMAIN_CTRL_STATUS
+  } while (0 != stat);
+}
+
+ResetOnDomain() {
+  // 16
+  __writeMemory32(0xfffffffe, 0x40000020, "Memory"); // SRST_ON_POWERDOMAIN
+  // 17
+  __writeMemory32(0xfeffffff, 0x40000300, "Memory"); // SRST_ON_PM0
+  __writeMemory32(0xffffffff, 0x40000304, "Memory"); // SRST_ON_PM1
+  __writeMemory32(0xffffffff, 0x40000308, "Memory"); // SRST_ON_PM2
+  // 18
+  __writeMemory32(0x00000f82, 0x40000000, "Memory"); // CG_ON_POWERDOMAIN
+  // 19
+  __writeMemory32(0x00500000, 0x40000100, "Memory"); // CG_ON_PM_0
+  __writeMemory32(0xffffffff, 0x40000104, "Memory"); // CG_ON_PM_1
+  __writeMemory32(0xffffffff, 0x40000108, "Memory"); // CG_ON_PM_2
+  // 20
+  __writeMemory32(0x00000004, 0x40001124, "Memory"); // CG_ON_PC_SCRT
+}
+
+InitializeIOCell() {
+  __var stat;
+
+  // 21
+  __writeMemory32(0x00000000, 0x40002308, "Memory"); // CTRL_IO_AON_2
+  __writeMemory32(0x00000000, 0x4000230C, "Memory"); // CTRL_IO_AON_3
+  // 22
+  __writeMemory32(0x00000000, 0x40002318, "Memory"); // CTRL_IO_AON_6
+  __writeMemory32(0x00000000, 0x40002314, "Memory"); // CTRL_IO_AON_5
+  __writeMemory32(0x00000001, 0x40002310, "Memory"); // CTRL_IO_AON_4
+}
+
+ResetOffDomain() {
+  // 23
+  __writeMemory32(0x0000003c, 0x40000004, "Memory"); // CG_OFF_POWERDOMAIN
+  // 24
+  __writeMemory32(0x00000020, 0x40000024, "Memory"); // SRST_OFF_POWERDOMAIN
+  // 25
+  __writeMemory32(0x08800000, 0x40000180, "Memory"); // CG_OFF_PM_0
+  // 26
+  __writeMemory32(0x09000000, 0x40000380, "Memory"); // SRST_OFF_PM_0
+}
+
+PowerOffDomain() {
+  __var stat;
+
+  // 27-1
+  __writeMemory32(0x00144004, 0x40000714, "Memory"); // POWERDOMAIN_CTRL_MODE
+  __writeMemory32(0x00000600, 0x40000710, "Memory"); // POWERDOMAIN_CTRL
+  do {
+    stat = __readMemory32(0x40000718, "Memory");    // POWERDOMAIN_CTRL_STATUS
+  } while (0x00140000 != stat);
+  // 27-2
+  __writeMemory32(0x00144004, 0x40000714, "Memory"); // POWERDOMAIN_CTRL_MODE
+  __writeMemory32(0x00000082, 0x40000710, "Memory"); // POWERDOMAIN_CTRL
+  do {
+    stat = __readMemory32(0x40000718, "Memory");    // POWERDOMAIN_CTRL_STATUS
+  } while (0x00144004 != stat);
+}
+
+StopPrescaler() {
+  // 28
+  __writeMemory32(0x00000011, 0x40000484, "Memory"); // PRESCAL_MAIN
+  __writeMemory32(0x00000001, 0x4000048C, "Memory"); // PRESCAL_CPUST
+  __writeMemory32(0x00000000, 0x40000494, "Memory"); // PRESCAL_UART0
+  __writeMemory32(0x00000000, 0x40000498, "Memory"); // PRESCAL_UART1
+  __writeMemory32(0x00000000, 0x4000049C, "Memory"); // PRESCAL_UART2
+  __writeMemory32(0x00000000, 0x400004A0, "Memory"); // PRESCAL_ADCC12A
+  __writeMemory32(0x00000000, 0x400004A4, "Memory"); // PRESCAL_ADCC24A
+}
+
+InitializeADPLL() {
+  // 29
+  __writeMemory32(0x00007008, 0x40000510, "Memory"); // CONFIG_ADPLL_0
+  __writeMemory32(0x00000000, 0x40000514, "Memory"); // CONFIG_ADPLL_1
+  // 30
+  __writeMemory32(0x00000003, 0x40002548, "Memory"); // ISO_ADPLL
+  // 31
+  __writeMemory32(0x00000000, 0x40002448, "Memory"); // PSW_ADPLL
+}
+
+InitializeRTC() {
+  __var stat;
+  // 32
+  __writeMemory32(0xffffffff, 0x40000148, "Memory"); // CG_ON_REFCLK
+  // 33
+  __writeMemory32(0xffffffff, 0x40002020, "Memory"); // SRST_ON_PA
+  __delay(1);
+  // 34
+  __writeMemory32(0xffffffff, 0x40002000, "Memory"); // CG_ON_PA
+  __delay(1);
+  // 35
+  __writeMemory32(0x00000000, 0x40002080, "Memory"); // CSM_RTC
+  // 36
+  __writeMemory32(0x00000000, 0x40002100, "Memory"); // CONFIG_OSC32K
+  __writeMemory32(0x00000000, 0x40002104, "Memory"); // CONFIG_SiOSC32K
+}
+
+InitializeMacro() {
+  // 37
+  __writeMemory32(0x00000000, 0x400005C0, "Memory"); // SELECT_EFUSE
+  __writeMemory32(0x00000000, 0x40000580, "Memory"); // OVERRIDE_EFUSE_OSC12M
+  __writeMemory32(0x00000000, 0x40002180, "Memory"); // OVERRIDE_EFUSE_OSC32K
+  __writeMemory32(0x00000000, 0x40002184, "Memory"); // OVERRIDE_EFUSE_SiOSC32K
+  __writeMemory32(0x00000000, 0x40002190, "Memory"); // OVERRIDE_EFUSE_BGR_0
+  __writeMemory32(0x00000000, 0x40002194, "Memory"); // OVERRIDE_EFUSE_BGR_1
+  __writeMemory32(0x00000000, 0x40000528, "Memory"); // CONFIG_DCDC_LVREG_1
+  __writeMemory32(0x00000011, 0x40002108, "Memory"); // CONFIG_SiOSC4M
+  __writeMemory32(0x00000000, 0x40002188, "Memory"); // OVERRIDE_EFUSE_SiOSC4M
+  __writeMemory32(0x00000001, 0x40002108, "Memory"); // CONFIG_SiOSC4M
+}
+
+InitializeMiscRegisters() {
+  // 38
+  __writeMemory32(0x00000000, 0x40000010, "Memory"); // DCG_POWERDOMAIN
+  __writeMemory32(0x00020002, 0x40000290, "Memory"); // CLKREQ_CONFIG_PE
+  __writeMemory32(0xffffffff, 0x40000720, "Memory"); // POWERDOMAIN_CTRL_MODE_FOR_WAIT
+  __writeMemory32(0x00a8abf8, 0x40000724, "Memory"); // POWERDOMAIN_CTRL_MODE_FOR_WRET
+  __writeMemory32(0x00a8aaa8, 0x40000728, "Memory"); // POWERDOMAIN_CTRL_MODE_FOR_RET
+  __writeMemory32(0x00000000, 0x40000780, "Memory"); // POWERMODE__delayCG_ON / POWERMODE_SLEEP_CG_ON
+  __writeMemory32(0x00000000, 0x40000790, "Memory"); // POWERMODE__delayPRESCAL / POWERMODE_SLEEP_PRESCAL
+  __writeMemory32(0x00000000, 0x400020c0, "Memory"); // RTCLV_RSYNC_SETTING
+  __writeMemory32(0x00000000, 0x40002210, "Memory"); // BROWNOUTMODE
+  __writeMemory32(0x00000000, 0x40002700, "Memory"); // IRQ_SETTING_0
+  __writeMemory32(0x00000000, 0x40002704, "Memory"); // IRQ_SETTING_1
+  __writeMemory32(0xffffffff, 0x40002708, "Memory"); // IRQ_STATUS
+  __writeMemory32(0x00000000, 0x4000270C, "Memory"); // WAKEUP_EN
+  __writeMemory32(0x00000000, 0x40000400, "Memory"); // CTRL_MODETRAN
+}
+
+SoftwareSystemReset() {
+  CheckSequencerStatus();
+  InitializeDCDC();
+  TrimClockSourceMacro();
+  InitializeVoltageMode();
+  InitializeClockSource();
+  InitializePrescaler();
+  InitializeAndPowerOnPLL();
+  StartUSB();
+  InitializePU();
+  StopUSB();
+  InitializeClockSourceMain();
+  PowerOnDomain();
+  ResetOnDomain();
+  InitializeIOCell();
+  ResetOffDomain();
+  PowerOffDomain();
+  StopPrescaler();
+  InitializeADPLL();
+  InitializeRTC();
+  InitializeMacro();
+  InitializeMiscRegisters();
+}
+
+EnableTraceClock() {
+  __writeMemory32(0x00001011, 0x40000484, "Memory");  // Set APB0 prescaler at 1.
+  __writeMemory32(0x00000003, 0x40000184, "Memory");  // Gate off H2APBP0 and H2HSYNCDNP0 clock.
+  __writeMemory32(0x00000001, 0x40000188, "Memory");  // Gate off GCONF clock.
+  __writeMemory32(0x00000003, 0x40000384, "Memory");  // Reset off H2APBP0 and H2HSYNCDNP0.
+  __writeMemory32(0x00000001, 0x40000388, "Memory");  // Reset off GCONF.
+  __writeMemory32(0x00000000, 0x40000408, "Memory");  // Set trace clock at 4MHz.
+  __writeMemory32(0x00000004, 0x400011A4, "Memory");  // Enable Trace Clock
+  __writeMemory32(0x00000001, 0x4004A0C4, "Memory");  // binary count enable
+}
+
+EnableSWO() {
+  EnableTraceClock();
+}
+
+EnableTracePort() {
+  EnableTraceClock();
+  __writeMemory32(0x00FF0000, 0x4004A140, "Memory");  // 'MCU_GPIO_{8,9,10,11}'  assign to TRACEDATA[0](0b11)
+  __writeMemory32(0x000000C0, 0x4004A150, "Memory");  // 'MCU_SPIM0_MISO' assign to TRACECLK(0b11)
+  __writeMemory32(0x00001000, 0x4004A200, "Memory");  // enable CPU_TRACE_OE
+}
+
+OnResetExec() {        // executes upon software RESET; Use the function name as is
+  SoftwareSystemReset();
+  EnableSWO();
+}
+
+SetRamVector() {
+  __writeMemory32(0x10000000, 0xe000ed08, "Memory");  // Set APB0 prescaler at 1.
+  #PC = __readMemory32(0x10000004, "Memory");
+  #SP = __readMemory32(0x10000000, "Memory");
+}
+
+ChgRamVector () {
+  __writeMemory32(0x10000000, 0xe000ed08, "Memory");  // Set APB0 prescaler at 1.
+}

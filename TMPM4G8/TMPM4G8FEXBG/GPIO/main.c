@@ -1,0 +1,89 @@
+/*************************************************************************
+ *
+ *   Used with ICCARM and AARM.
+ *
+ *    (c) Copyright IAR Systems 2012
+ *
+ *    File name   : main.c
+ *    Description : This example project shows how to use the
+ *    IAR Embedded Workbench for ARM to develop code for Toshiba
+ *    TMPM4G8FEXBG family microcontrollers.
+ *    It is developed for Toshiba TMPM4G8FEXBG Evaluation Board.
+ *
+ *    It uses the GP Timer interrupt handler to toggle PE4-PE7 port pin data.
+ *
+ *    History :
+ *    1. Date        : 08.2008
+ *       Author      : Stoyan Choynev
+ *       Description : Initial Revision
+ *    2. Date        : 2017/June/23
+ *       Author      : Santosh Pawar
+ *       Description : Adapted for TMPM4G8FEXBG
+ *
+ *
+ *    $Revision: 64446 $
+ **************************************************************************/
+
+/** include files **/
+#include <stdio.h>
+#include <intrinsics.h>
+#include "io_macros.h"
+#include "TMPM4G8.h"
+#include "system_TMPM4Gx.h"
+
+#pragma section=".intvec"
+
+#define LED_PIN   0xf0
+
+__IO_REG32(VTOR,   0xE000ED08,__READ_WRITE);
+
+void INTT32A00_A_CT_IRQHandler(void)
+{
+    volatile unsigned char dummy;
+    // Clear INTNCLR and INTPCLR Flags
+    TSB_IB->IMC000 |= 0x40;
+    dummy = TSB_IB->IMC000; // Dummy read
+    NVIC_ClearPendingIRQ(INTT32A00_A_CT_IRQn);
+    TSB_PE->DATA ^= LED_PIN;
+}
+
+int main(void)
+{
+  VTOR  = (unsigned int)__segment_begin(".intvec");
+
+  // Enable clock to all modules
+  TSB_CG->FSYSMENA |= 0xFFFFFFFF;
+  TSB_CG->FSYSMENB |= 0x000000FF;
+
+  // Setup LED port Output (PE4-PE7)
+  TSB_PE->CR |= LED_PIN;
+  TSB_PE->PUP |= LED_PIN;
+  TSB_PE->IE &= ~LED_PIN;
+  TSB_PE->FR1 &= ~LED_PIN;
+  TSB_PE->FR2 &= ~LED_PIN;
+  TSB_PE->FR3 &= ~LED_PIN;
+  TSB_PE->FR4 &= ~LED_PIN;
+  TSB_PE->FR5 &= ~LED_PIN;
+  TSB_PE->DATA |= LED_PIN;
+
+  // Setup Timer0 for periodic interrupt
+  NVIC_DisableIRQ(INTT32A00_A_CT_IRQn);
+  TSB_T32A0->RUNA = 1;
+  TSB_T32A0->CRA = (7<<28) | 1;
+  TSB_T32A0->RGA0 = 0x8000;
+
+  // Enable interrupt for Timer
+  NVIC_SetPriority(INTT32A00_A_CT_IRQn, 1);
+  NVIC_EnableIRQ(INTT32A00_A_CT_IRQn);
+  // Setup INTIF for INTT32A00A_IRQn line
+  TSB_IB->IMC000 = 1;
+  // Start Timer
+  TSB_T32A0->RUNA = 0x03;
+
+  __enable_interrupt();
+
+  while(1)
+  {
+    ;
+  }
+}

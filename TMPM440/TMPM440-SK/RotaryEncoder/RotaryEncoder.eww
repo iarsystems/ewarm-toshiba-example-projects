@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<workspace>
+  <project>
+    <path>$WS_DIR$/RotaryEncoder.ewp</path>
+  </project>
+  <batchBuild>
+    <batchDefinition>
+      <name>All</name>
+      <member>
+        <project>RotaryEncoder</project>
+        <configuration>Debug iFlash</configuration>
+      </member>
+      <member>
+        <project>RotaryEncoder</project>
+        <configuration>Debug iRAM</configuration>
+      </member>
+      <member>
+        <project>RotaryEncoder</project>
+        <configuration>Debug iFlash_BE8</configuration>
+      </member>
+      <member>
+        <project>RotaryEncoder</project>
+        <configuration>Debug iRAM_BE8</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
+</workspace>

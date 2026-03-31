@@ -1,0 +1,94 @@
+ДеДЯinclude
+Да      usb.h
+Да      usb_interrupt.h
+Да      usb_intr_hw.h
+Да      usb_msc.h
+Да      usb_scsi_util.h
+Да      usb_timer.h
+Да      usb_types.h
+Да      usb_usbd.h
+Да      vssver.scc
+Да      XTAGS
+Да      
+ДеДЯsrc
+Да  Да  usb_config.h
+Да  Да  usb_queue.h
+Да  Да  usb_usbd_class.h
+Да  Да  XTAGS
+Да  Да  
+Да  ДеДЯclass
+Да  Да  Да  usb_classdrv.c
+Да  Да  Да  usb_classdrv.h
+Да  Да  Да  usb_classdrvblock.c
+Да  Да  Да  usb_classdrvblock.h
+Да  Да  Да  usb_classdrvmem.c
+Да  Да  Да  usb_classdrvmem.h
+Да  Да  Да  XTAGS
+Да  Да  Да  
+Да  Да  ДдДЯmassstorage
+Да  Да          usb_mscapi.c
+Да  Да          usb_mscapi.h
+Да  Да          usb_mscbbb.c
+Да  Да          usb_mscbbb.h
+Да  Да          usb_msccbi.c
+Да  Да          usb_msccbi.h
+Да  Да          usb_mscmem.c
+Да  Да          usb_mscmem.h
+Да  Да          usb_msc_core.c
+Да  Да          usb_msc_core.h
+Да  Да          usb_scsi.c
+Да  Да          usb_scsi.h
+Да  Да          XTAGS
+Да  Да          
+Да  ДеДЯhcd
+Да  Да  ДдДЯohci
+Да  Да          usb_ohci.h
+Да  Да          usb_ohciconfig.h
+Да  Да          usb_ohciinit.c
+Да  Да          usb_ohciintr.c
+Да  Да          usb_ohcilib.c
+Да  Да          usb_ohcilib.h
+Да  Да          usb_ohcimem.c
+Да  Да          usb_ohcimem.h
+Да  Да          usb_ohcireg.h
+Да  Да          usb_ohciroothub.c
+Да  Да          usb_ohciroothub.h
+Да  Да          usb_ohcitypes.h
+Да  Да          usb_ohcixfer.c
+Да  Да          usb_ohcixfer.h
+Да  Да          XTAGS
+Да  Да          
+Да  ДеДЯusbd
+Да  Да      usb_uhub.c
+Да  Да      usb_uhub.h
+Да  Да      usb_usbd.c
+Да  Да      usb_usbd_mem.c
+Да  Да      usb_usbd_mem.h
+Да  Да      usb_usbd_subr.c
+Да  Да      usb_usbd_subr.h
+Да  Да      usb_usbd_util.c
+Да  Да      usb_usbd_util.h
+Да  Да      usb_usbd_var.h
+Да  Да      XTAGS
+Да  Да      
+Да  ДдДЯutil
+Да          usb_ctxswt.c
+Да          usb_ctxswt.h
+Да          usb_dbg.c
+Да          usb_dbg.h
+Да          usb_intr.c
+Да          usb_intr.h
+Да          usb_intr_hw.c
+Да          usb_queue.c
+Да          usb_tmr.c
+Да          usb_tmr.h
+Да          usb_trace.c
+Да          usb_trace.h
+Да          vssver.scc
+Да          XTAGS
+Да          
+ДдДЯwrapper
+        msctolsapi2.c
+        msctolsapi2.h
+        XTAGS
+        

@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd"
+     xml:lang="en">
+  <head>
+    <title>Information Center for ARM</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    <link type="text/css" rel="stylesheet" media="all" href="file://$TOOLKIT_DIR$/doc/infocenter/style/ewic.css" />
+  </head>
+  <body>
+  <div id="topbanner"></div>
+  <div id="titlebanner_small">
+    <h2>Information Center for ARM</h2>
+  </div>
+  <div class="breadcrumb"><a href="$TOOLKIT_DIR$/doc/infocenter/index.ENU.html">Information Center for ARM</a> | EXAMPLES</div>
+  <div class="mainblock">
+   <h2>Example description</h2>
+
+   <pre>  <!--Insert readme.txt-->
+GettingStarted
+
+DESCRIPTION
+===========
+  This example project shows how to use the IAR Embedded Workbench for ARM
+  to develop code for the Toshiba RBTZ2000-SK.
+  It shows basic use of I/O, timers, GIC and some core initializations.
+  The two onboard leds start to blink with different frequencies.
+  At this stage the onboard certified SPI_Flash_ROM makes initializations to the system 
+  (clock domains init, ddr init etc.).
+
+COMPATIBILITY
+=============
+   The example project is compatible with Toshiba RBTZ2000-SK board.
+  By default, the projects are configured to use the J-Link JTAG interface.
+
+CONFIGURATIONS
+===============
+
+  SRAM Debug:
+
+   This configuration is intended for debugging in the internal SRAM non-main memory.
+
+   Set DSW1 to: on-off-off-off (boot from SPI)
+   Set SW1 to:  position 2-3 and 5-6 (boot from SPI_Flash_ROM, CPU_CS0 wired to FLASH_CS1)
+ 
+  DDR Debug:
+
+   This configuration is intended for debugging in the external DDR3 main memory. 
+
+   Set DSW1 to: on-off-off-off (boot from SPI)
+   Set SW1 to:  position 2-3 and 5-6 (boot from SPI_Flash_ROM, CPU_CS0 wired to FLASH_CS1)
+
+GETTING STARTED
+===============
+
+  1) Power-up the board and set JP2 to position 1-2 (non-reset state)
+
+  2) Build and download the example.
+
+  3) Run the program.
+     </pre>
+
+  </div>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
