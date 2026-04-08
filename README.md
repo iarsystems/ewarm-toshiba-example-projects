@@ -1,6 +1,3 @@
-# Embedded Workbench for Arm
+# Toshiba project examples for<br>[Embedded Workbench for Arm](https://iar.com/ewarm)
 
-## Project Examples for Toshiba
-
-- [Latest](https://github.com/iarsystems/ewarm-toshiba-project-examples/releases/latest/) release.
-- [Earlier](https://github.com/iarsystems/ewarm-toshiba-project-examples/releases/) releases.
+Visit our [hub](https://github.com/iarsystems/embedded-workbench-project-examples) for more.
